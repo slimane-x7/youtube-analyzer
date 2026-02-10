@@ -1,0 +1,8 @@
+{
+  "name": "TubeArchitect AI",
+  "description": "Professional YouTube channel analytics and AI-powered video idea generator. Connect your channel, analyze performance patterns, and get data-driven growth strategies.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
