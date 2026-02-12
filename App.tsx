@@ -56,7 +56,6 @@ const AppContent: React.FC = () => {
   const [isLoadingStats, setIsLoadingStats] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  console.log("DEBUG: AppContent State", { step, user: user?.email, isLoading });
 
   // Force Welcome on Mount to ensure Landing Page is always the entry
   React.useEffect(() => {
@@ -139,7 +138,6 @@ const AppContent: React.FC = () => {
   // CRITICAL: Force Landing Page if step is 'welcome'
   if (step === 'welcome') {
     return <LandingPage onEnterDashboard={() => {
-      console.log("DEBUG: Entering Dashboard from Landing Page");
       if (profile.niche && profile.passionBio) setStep('connect');
       else setStep('onboarding');
     }} />;
