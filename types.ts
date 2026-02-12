@@ -1,16 +1,22 @@
 
 export interface UserProfile {
-  contentType: string;
-  targetAudience: string;
+  name: string;
+  // Step 2: Passion & Niche
+  passionBio: string;
+  niche: string;
+  // Step 3: Content Style
+  contentStyles: string[];
+  // Step 4: Experience
+  experienceLevel: 'Beginner' | 'Intermediate' | 'Advanced';
+  // Step 5: Goals
+  primaryGoal: 'Monetization' | 'Audience Growth' | 'Personal Brand' | 'Community';
+  // Step 6: Reality Check
+  timeCommitment: string;
+  productionConstraints: string[];
+  geminiApiKey: string;
+  // Legacy fields kept for compatibility or removal later
   language: string;
   region: string;
-  goals: string[];
-  postingFrequency: string;
-  videoLength: string;
-  experienceLevel: string;
-  resources: string[];
-  challenges: string[];
-  ideaPreference: string;
 }
 
 export interface VideoIdea {
