@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import { supabase } from './lib/supabase';
+import { supabase, isSupabaseConfigured } from './lib/supabase';
 import { LandingPage } from './components/LandingPage';
 import {
   Youtube,
@@ -49,13 +49,35 @@ import { StepCommitment } from './components/onboarding/StepCommitment';
 const MOCK_CHANNELS: MockChannelStats[] = [];
 
 const AppContent: React.FC = () => {
-  const { user, signOut, isLoading } = useAuth();
+  const { user, signOut, isLoading: authLoading } = useAuth();
   const [step, setStep] = useState<'welcome' | 'onboarding' | 'connect' | 'advanced-connect' | 'analyzing' | 'dashboard'>('welcome');
   const [activeTab, setActiveTab] = useState<'overview' | 'strategy' | 'ideas' | 'production' | 'settings'>('overview');
   const [onboardingStep, setOnboardingStep] = useState(0);
   const [isLoadingStats, setIsLoadingStats] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // 0. Handle Missing Configuration (Vercel Env Vars)
+  if (!isSupabaseConfigured) {
+    return (
+      <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center text-white p-6 text-center" dir="rtl">
+        <div className="bg-red-600/10 border border-red-600/20 p-12 rounded-[3rem] max-w-2xl glow-red">
+          <AlertCircle size={80} className="text-red-600 mx-auto mb-8" />
+          <h1 className="text-4xl font-black mb-6">تنبيه: الكريدنشلز مفقودة!</h1>
+          <p className="text-xl text-neutral-400 font-bold leading-relaxed mb-8">
+            يبدو أنك قمت برفع الموقع على Vercel ولكنك لم تقم بإضافة "متغيرات البيئة" (Environment Variables) الخاصة بـ Supabase.
+            <br /><br />
+            بدون هذه المتغيرات، لا يمكن للموقع الاتصال بقاعدة البيانات وسيفشل في العمل.
+          </p>
+          <div className="space-y-4 text-right bg-black/40 p-6 rounded-2xl border border-white/5">
+            <p className="font-bold text-red-500 underline uppercase tracking-widest text-xs mb-4">المتغيرات المطلوبة:</p>
+            <code className="block text-sm text-neutral-500">VITE_SUPABASE_URL</code>
+            <code className="block text-sm text-neutral-500">VITE_SUPABASE_ANON_KEY</code>
+          </div>
+          <p className="mt-10 text-sm text-neutral-600">قم بإضافتها في لوحة تحكم Vercel ثم أعد البناء (Redeploy).</p>
+        </div>
+      </div>
+    );
+  }
 
   // Force Welcome on Mount to ensure Landing Page is always the entry
   React.useEffect(() => {
@@ -121,7 +143,7 @@ const AppContent: React.FC = () => {
   }, [user]);
 
   // Handle Loading Overlay for Auth State
-  if (isLoading) {
+  if (authLoading) {
     return (
       <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center text-white gap-6">
         <div className="relative">
