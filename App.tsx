@@ -79,11 +79,6 @@ const AppContent: React.FC = () => {
     );
   }
 
-  // Force Welcome on Mount to ensure Landing Page is always the entry
-  React.useEffect(() => {
-    setStep('welcome');
-  }, []);
-
   const [profile, setProfile] = useState<UserProfile>({
     name: user?.user_metadata?.full_name || '',
     passionBio: '',
@@ -105,6 +100,20 @@ const AppContent: React.FC = () => {
     apiKey: '',
     region: 'Global'
   });
+
+  // Handle Initial Step Selection & Auto-Redirection
+  React.useEffect(() => {
+    if (authLoading) return;
+
+    if (!user) {
+      setStep('welcome');
+    } else if (step === 'welcome') {
+      // Auto-advance logged-in users from Landing Page to App
+      // This solves the "stuck on landing page" issue after login
+      if (profile.niche && profile.passionBio) setStep('connect');
+      else setStep('onboarding');
+    }
+  }, [authLoading, user, profile.niche, profile.passionBio]);
 
   const [selectedChannel, setSelectedChannel] = useState<MockChannelStats | null>(null);
   const [analysis, setAnalysis] = useState<ChannelAnalysis | null>(null);
@@ -166,9 +175,8 @@ const AppContent: React.FC = () => {
   }
 
   // If NOT authenticated and not on welcome, we should probably go back to welcome
-  if (!user) {
-    setStep('welcome');
-    return null;
+  if (!user && step !== 'welcome') {
+    return null; // The useEffect above will handle setting step to 'welcome'
   }
 
   const fetchRealYouTubeData = async (channelId: string, apiKey: string) => {

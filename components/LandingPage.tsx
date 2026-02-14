@@ -62,6 +62,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterDashboard }) =>
                                     await signInWithEmail(email, password);
                                 }
                                 setShowAuthModal(false);
+                                onEnterDashboard();
                             } catch (err: any) {
                                 setAuthError(err.message === 'Invalid login credentials' ? 'البيانات غير صحيحة' : err.message);
                             } finally {
